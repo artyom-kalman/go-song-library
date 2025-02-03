@@ -10,14 +10,13 @@ import (
 	"github.com/artyom-kalman/go-song-library/internal/repositories"
 )
 
-func NewSong(w http.ResponseWriter, r *http.Request) {
+func NewSongHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	var newSong models.NewSong
-
 	if err := json.NewDecoder(r.Body).Decode(&newSong); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

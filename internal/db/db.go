@@ -41,7 +41,7 @@ func ConnectToDB() (*DBConnection, error) {
 	return openedConn, nil
 }
 
-func (db *DBConnection) Query(query string, dest ...any) (*sql.Rows, error) {
+func (db *DBConnection) Query(query string) (*sql.Rows, error) {
 	err := db.connection.Ping()
 	if err != nil {
 		return nil, err
@@ -53,4 +53,20 @@ func (db *DBConnection) Query(query string, dest ...any) (*sql.Rows, error) {
 	}
 
 	return rows, nil
+}
+
+func (db *DBConnection) Exec(query string) (int, error) {
+	err := db.connection.Ping()
+	if err != nil {
+		return 0, err
+	}
+
+	result, err := db.connection.Exec(query)
+	if err != nil {
+		return 0, err
+	}
+
+	rowsAffected, _ := result.RowsAffected()
+
+	return int(rowsAffected), nil
 }

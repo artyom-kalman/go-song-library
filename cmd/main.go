@@ -16,7 +16,7 @@ func main() {
 		log.Fatalln("error connecting to database:", err)
 	}
 
-	http.HandleFunc("/new-song", handlers.NewSong)
+	http.HandleFunc("/song", handlers.SongHandler)
 
 	log.Println("Started a server on", PORT)
 
