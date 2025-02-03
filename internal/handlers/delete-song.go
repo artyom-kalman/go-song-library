@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -16,23 +17,9 @@ func DeleteSongHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req struct {
-		SongId string `json:"songId"`
-	}
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	songIdStr := req.SongId
-	if songIdStr == "" {
-		http.Error(w, "Specify song id", http.StatusBadRequest)
-		return
-	}
-
-	songId, err := strconv.Atoi(songIdStr)
+	songId, err := getSongIdFromRequest(r)
 	if err != nil {
-		http.Error(w, "Given value is not integer", http.StatusInternalServerError)
+		http.Error(w, "Require song id", http.StatusBadRequest)
 		return
 	}
 
@@ -52,4 +39,26 @@ func DeleteSongHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+func getSongIdFromRequest(r *http.Request) (int, error) {
+	var req struct {
+		SongId string `json:"songId"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return 0, err
+	}
+
+	songIdStr := req.SongId
+	if songIdStr == "" {
+		return 0, fmt.Errorf("song id must not be empty string")
+	}
+
+	songId, err := strconv.Atoi(songIdStr)
+	if err != nil {
+		return 0, nil
+	}
+
+	return songId, nil
+
 }
