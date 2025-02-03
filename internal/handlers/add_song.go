@@ -31,7 +31,7 @@ func NewSongHandler(w http.ResponseWriter, r *http.Request) {
 
 	songRepo := repositories.NewSongRepo(dbConn)
 
-	err = songRepo.NewSong(&newSong)
+	err = songRepo.AddSong(&newSong)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Fatalln("error adding new song", err)
