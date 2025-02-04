@@ -6,20 +6,8 @@ import (
 	"github.com/artyom-kalman/go-song-library/internal/models"
 )
 
-type SongsSearchParams struct {
-	Id          int
-	Name        string
-	GroupId     int
-	GroupName   string
-	ReleaseData string
-	Offset      int
-	PageSize    int
-}
-
-func (repo *SongRepo) GetSongs(searchParams *SongsSearchParams) ([]*models.Song, error) {
+func (repo *SongRepo) GetSongs(searchParams *SongSearchParams) ([]*models.Song, error) {
 	query := makeQueryForSongs(searchParams)
-
-	println(query)
 
 	queryResult, err := repo.conn.Query(query)
 	if err != nil {
@@ -48,19 +36,41 @@ func (repo *SongRepo) GetSongs(searchParams *SongsSearchParams) ([]*models.Song,
 		return nil, err
 	}
 
-	return nil, nil
+	return songs, nil
 }
 
-func makeQueryForSongs(searchParams *SongsSearchParams) string {
-	query := fmt.Sprintf(
-		`SELECT s.id, s.name AS song_name, g.id AS group_id, g.name AS group_name, s.release_date, s.link
+func makeQueryForSongs(searchParams *SongSearchParams) string {
+	query := fmt.Sprintf(`SELECT s.id, s.name AS song_name, g.id AS group_id, g.name AS group_name, s.release_date, s.link
 		FROM songs AS s
-		INNER JOIN groups AS g ON s.group_id = g.id
-		WHERE s.name ILIKE '%%%s%%'
-		OFFSET %d
-		LIMIT %d`,
-		searchParams.Name, searchParams.Offset, searchParams.PageSize,
-	)
+		INNER JOIN groups AS g ON s.group_id = g.id WHERE s.name ILIKE '%%%s%%'`, searchParams.SongName)
+
+	if searchParams.StartDate != "" {
+		query = fmt.Sprintf("%s AND s.release_date >= '%s'", query, searchParams.StartDate)
+	}
+
+	if searchParams.EndDate != "" {
+		query = fmt.Sprintf("%s AND s.release_date < '%s'", query, searchParams.EndDate)
+	}
+
+	if searchParams.GroupName != "" {
+		query = fmt.Sprintf("%s AND g.name ILIKE '%%%s%%'", query, searchParams.GroupName)
+	}
+
+	if searchParams.GroupId >= 0 {
+		query = fmt.Sprintf("%s AND g.id = %d", query, searchParams.GroupId)
+	}
+
+	if searchParams.SongId >= 0 {
+		query = fmt.Sprintf("%s AND s.id = %d", query, searchParams.SongId)
+	}
+
+	if searchParams.Offset >= 0 {
+		query = fmt.Sprintf("%s OFFSET %d", query, searchParams.Offset)
+	}
+
+	if searchParams.Limit >= 0 {
+		query = fmt.Sprintf("%s LIMIT %d", query, searchParams.Limit)
+	}
 
 	return query
 }
