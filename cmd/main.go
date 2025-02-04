@@ -10,14 +10,14 @@ import (
 )
 
 // TODO
-//
-// Logger
 
 // Получение теста песни
 //     GET /lyrics?song-id= &offset= &size=
 
 // Получение всей библиотеки
 //     GET /songs
+//
+// Все поля при добавлении песни
 
 const PORT = ":3030"
 
@@ -31,7 +31,7 @@ func main() {
 	}
 
 	http.HandleFunc("/song", handlers.SongHandler)
-	// http.HandleFunc("/", nil)
+	http.HandleFunc("/songs", handlers.GetSongsHandler)
 
 	logger.Logger.Info(fmt.Sprintf("Server is running on %s", PORT))
 
