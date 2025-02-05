@@ -32,6 +32,7 @@ func main() {
 
 	http.HandleFunc("/song", handlers.SongHandler)
 	http.HandleFunc("/songs", handlers.GetSongsHandler)
+	http.HandleFunc("/lyrics", handlers.GetLyricsHandler)
 
 	logger.Logger.Info(fmt.Sprintf("Server is running on %s", PORT))
 

@@ -50,7 +50,7 @@ func GetSongsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(songsJson)
 }
 
-func getSongQueryParams(r *http.Request) (*repositories.SongSearchParams, error) {
+func getSongQueryParams(r *http.Request) (*repositories.SongQueryParams, error) {
 	queryParams := r.URL.Query()
 
 	songId := queryParams.Get("songid")
@@ -65,7 +65,7 @@ func getSongQueryParams(r *http.Request) (*repositories.SongSearchParams, error)
 	offset := queryParams.Get("offset")
 	limit := queryParams.Get("limit")
 
-	searchParams := repositories.NewSongSearchParams()
+	searchParams := repositories.NewSongQueryParams()
 
 	searchParams.SongName = songName
 	searchParams.GroupName = groupName
@@ -105,7 +105,7 @@ func getSongQueryParams(r *http.Request) (*repositories.SongSearchParams, error)
 	return searchParams, nil
 }
 
-func validateSearchSongParams(searchParams *repositories.SongSearchParams) bool {
+func validateSearchSongParams(searchParams *repositories.SongQueryParams) bool {
 	if searchParams.SongId < 0 {
 		return false
 	}

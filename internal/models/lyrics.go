@@ -1,7 +1,7 @@
 package models
 
 type Lyrics struct {
-	Id     int
-	SongId int
-	Text   []string
+	SongId  int    `json:"songId"`
+	OrederN int    `json:"orderN"`
+	Lyrics  string `json:"lyrics"`
 }

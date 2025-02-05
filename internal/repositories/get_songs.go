@@ -6,8 +6,8 @@ import (
 	"github.com/artyom-kalman/go-song-library/internal/models"
 )
 
-func (repo *SongRepo) GetSongs(searchParams *SongSearchParams) ([]*models.Song, error) {
-	query := makeQueryForSongs(searchParams)
+func (repo *SongRepo) GetSongs(queryParams *SongQueryParams) ([]*models.Song, error) {
+	query := makeQueryForGetSongs(queryParams)
 
 	queryResult, err := repo.conn.Query(query)
 	if err != nil {
@@ -39,37 +39,37 @@ func (repo *SongRepo) GetSongs(searchParams *SongSearchParams) ([]*models.Song, 
 	return songs, nil
 }
 
-func makeQueryForSongs(searchParams *SongSearchParams) string {
+func makeQueryForGetSongs(queryParams *SongQueryParams) string {
 	query := fmt.Sprintf(`SELECT s.id, s.name AS song_name, g.id AS group_id, g.name AS group_name, s.release_date, s.link
 		FROM songs AS s
-		INNER JOIN groups AS g ON s.group_id = g.id WHERE s.name ILIKE '%%%s%%'`, searchParams.SongName)
+		INNER JOIN groups AS g ON s.group_id = g.id WHERE s.name ILIKE '%%%s%%'`, queryParams.SongName)
 
-	if searchParams.StartDate != "" {
-		query = fmt.Sprintf("%s AND s.release_date >= '%s'", query, searchParams.StartDate)
+	if queryParams.StartDate != "" {
+		query = fmt.Sprintf("%s AND s.release_date >= '%s'", query, queryParams.StartDate)
 	}
 
-	if searchParams.EndDate != "" {
-		query = fmt.Sprintf("%s AND s.release_date < '%s'", query, searchParams.EndDate)
+	if queryParams.EndDate != "" {
+		query = fmt.Sprintf("%s AND s.release_date < '%s'", query, queryParams.EndDate)
 	}
 
-	if searchParams.GroupName != "" {
-		query = fmt.Sprintf("%s AND g.name ILIKE '%%%s%%'", query, searchParams.GroupName)
+	if queryParams.GroupName != "" {
+		query = fmt.Sprintf("%s AND g.name ILIKE '%%%s%%'", query, queryParams.GroupName)
 	}
 
-	if searchParams.GroupId >= 0 {
-		query = fmt.Sprintf("%s AND g.id = %d", query, searchParams.GroupId)
+	if queryParams.GroupId >= 0 {
+		query = fmt.Sprintf("%s AND g.id = %d", query, queryParams.GroupId)
 	}
 
-	if searchParams.SongId >= 0 {
-		query = fmt.Sprintf("%s AND s.id = %d", query, searchParams.SongId)
+	if queryParams.SongId >= 0 {
+		query = fmt.Sprintf("%s AND s.id = %d", query, queryParams.SongId)
 	}
 
-	if searchParams.Offset >= 0 {
-		query = fmt.Sprintf("%s OFFSET %d", query, searchParams.Offset)
+	if queryParams.Offset >= 0 {
+		query = fmt.Sprintf("%s OFFSET %d", query, queryParams.Offset)
 	}
 
-	if searchParams.Limit >= 0 {
-		query = fmt.Sprintf("%s LIMIT %d", query, searchParams.Limit)
+	if queryParams.Limit >= 0 {
+		query = fmt.Sprintf("%s LIMIT %d", query, queryParams.Limit)
 	}
 
 	return query

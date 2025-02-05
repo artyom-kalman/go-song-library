@@ -1,6 +1,6 @@
 package repositories
 
-type SongSearchParams struct {
+type SongQueryParams struct {
 	SongId    int
 	SongName  string
 	GroupId   int
@@ -11,8 +11,8 @@ type SongSearchParams struct {
 	Limit     int
 }
 
-func NewSongSearchParams() *SongSearchParams {
-	return &SongSearchParams{
+func NewSongQueryParams() *SongQueryParams {
+	return &SongQueryParams{
 		SongId:  -1,
 		GroupId: -1,
 		Offset:  -1,

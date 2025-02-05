@@ -7,7 +7,7 @@ import (
 	"github.com/artyom-kalman/go-song-library/internal/models"
 )
 
-func TestAddLyrics(t *testing.T) {
+func TestAddLyricsAlreadyExists(t *testing.T) {
 	lyrics := models.NewLyrics{
 		SongId: 6,
 		Text: []string{
@@ -24,8 +24,8 @@ func TestAddLyrics(t *testing.T) {
 	songRepo := NewSongRepo(dbConn)
 
 	err = songRepo.AddLyrycs(&lyrics)
-	if err != nil {
-		t.Errorf("expected no error\ngot %v", err)
+	if err == nil {
+		t.Errorf("expected error")
 	}
 
 }
