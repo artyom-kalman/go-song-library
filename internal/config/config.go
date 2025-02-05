@@ -1,8 +1,10 @@
 package config
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/artyom-kalman/go-song-library/pkg/logger"
 	"github.com/joho/godotenv"
 )
 
@@ -25,6 +27,12 @@ func LoadConfig() error {
 		isConfigLoaded = true
 	}
 
+	if !isConfigLoaded {
+		return fmt.Errorf("Failed to load .env")
+	}
+
+	logger.Logger.Info("Loaded config from .env file")
+
 	return nil
 }
 
@@ -36,6 +44,7 @@ func GetDBConfig() (*DBConfig, error) {
 		}
 	}
 
+	logger.Logger.Info("Loaded database configuration")
 	return &DBConfig{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("DB_PORT"),
@@ -52,6 +61,7 @@ func GetServerConfig() (*ServerConfig, error) {
 		}
 	}
 
+	logger.Logger.Info("Loaded server configuration")
 	return &ServerConfig{
 		Port: os.Getenv("PORT"),
 	}, nil

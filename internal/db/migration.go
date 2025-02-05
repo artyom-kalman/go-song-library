@@ -12,6 +12,8 @@ import (
 )
 
 func RunMigration() error {
+	logger.Logger.Debug("Running migration...")
+
 	if databaseConnection == nil {
 		return fmt.Errorf("Error running migration: database connection is closed")
 	}
@@ -33,7 +35,11 @@ func RunMigration() error {
 	}
 
 	err = migration.Up()
-	logger.Logger.Error(err.Error())
+	if err != nil {
+		logger.Logger.Error(err.Error())
+	} else {
+		logger.Logger.Info("Migrated database schema")
+	}
 
 	return nil
 }

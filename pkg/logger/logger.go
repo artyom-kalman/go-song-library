@@ -13,4 +13,6 @@ func InitLogger() {
 	}
 
 	Logger = slog.New(slog.NewTextHandler(os.Stdout, &opts))
+
+	Logger.Info("Initialized logger")
 }

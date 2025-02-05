@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/artyom-kalman/go-song-library/internal/config"
+	"github.com/artyom-kalman/go-song-library/pkg/logger"
 
 	_ "github.com/lib/pq"
 )
@@ -16,8 +17,8 @@ type DBConnection struct {
 }
 
 func GetDatabase() *DBConnection {
-	databaseConfig, _ := config.GetDBConfig()
 	if databaseConnection == nil {
+		databaseConfig, _ := config.GetDBConfig()
 		InitDatabase(databaseConfig)
 	}
 
@@ -37,6 +38,8 @@ func InitDatabase(config *config.DBConfig) error {
 	databaseConnection = &DBConnection{
 		connection: db,
 	}
+
+	logger.Logger.Info("Initialized database connection")
 
 	return nil
 }
