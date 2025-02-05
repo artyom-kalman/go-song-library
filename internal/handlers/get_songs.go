@@ -11,9 +11,10 @@ import (
 )
 
 func GetSongsHandler(w http.ResponseWriter, r *http.Request) {
-	logger.Logger.Info("New getsongs request")
+	logger.Info("New getsongs request")
 
 	if r.Method != http.MethodGet {
+		logger.Error("Wrong HTTP method: %s", r.Method)
 		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
 		return
 	}
@@ -22,27 +23,29 @@ func GetSongsHandler(w http.ResponseWriter, r *http.Request) {
 
 	searchParams, err := getSongQueryParams(r)
 	if err != nil {
+		logger.Error("Error parsing query parameters: %v", err)
 		http.Error(w, "Error parsing query parameters", http.StatusBadRequest)
-		logger.Logger.Error(err.Error())
 		return
 	}
 
 	songs, err := songRepo.GetSongs(searchParams)
 	if err != nil {
-		logger.Logger.Error(err.Error())
+		logger.Error("Error filtering songs: %v", err)
 		http.Error(w, "Error filtering songs", http.StatusInternalServerError)
 		return
 	}
 
 	songsJson, err := json.Marshal(songs)
 	if err != nil {
-		logger.Logger.Error(err.Error())
+		logger.Error("Error encoding songs to JSON: %v", err)
 		http.Error(w, "Error encoding songs", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(songsJson)
+
+	logger.Info("Getsongs request served")
 }
 
 func getSongQueryParams(r *http.Request) (*repositories.SongQueryParams, error) {
