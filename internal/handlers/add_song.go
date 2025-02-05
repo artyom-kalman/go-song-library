@@ -35,8 +35,22 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 
 	songRepo := repositories.NewSongRepo(db.GetDatabase())
 
-	if err := songRepo.AddSong(&newSong); err != nil {
+	newSongId, err := songRepo.AddSong(&newSong)
+	if err != nil {
 		logger.Error("Failed to add song: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	songLyrics := services.ParseSongText(newSong.Text)
+	newLyrics := models.NewLyrics{
+		SongId: newSongId,
+		Text:   songLyrics,
+	}
+
+	err = songRepo.AddLyrycs(&newLyrics)
+	if err != nil {
+		logger.Error("Failed to add lyrics for the song: ", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

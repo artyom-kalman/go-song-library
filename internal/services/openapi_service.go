@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
+	"github.com/artyom-kalman/go-song-library/internal/config"
 	"github.com/artyom-kalman/go-song-library/internal/models"
 	"github.com/artyom-kalman/go-song-library/pkg/logger"
 )
@@ -17,6 +19,10 @@ func GetSongInfo(song *models.NewSong) error {
 		return err
 	}
 
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("Error getting song info")
+	}
+
 	if err := json.NewDecoder(resp.Body).Decode(&song); err != nil {
 		return err
 	}
@@ -26,5 +32,10 @@ func GetSongInfo(song *models.NewSong) error {
 }
 
 func getApiUrl(songName string, groupName string) string {
-	return fmt.Sprintf("http://localhost:3030/info?group=%s&song=%s", songName, groupName)
+	baseUrl := fmt.Sprintf("%s/info", config.GetOpenAPIURL())
+	params := url.Values{}
+	params.Add("song", songName)
+	params.Add("group", groupName)
+
+	return fmt.Sprintf("%s?%s", baseUrl, params.Encode())
 }

@@ -66,3 +66,7 @@ func GetServerConfig() (*ServerConfig, error) {
 		Port: os.Getenv("PORT"),
 	}, nil
 }
+
+func GetOpenAPIURL() string {
+	return os.Getenv("OPENAPI_URL")
+}
