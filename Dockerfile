@@ -1,4 +1,4 @@
-FROM golang:1.19 as builder
+FROM golang:1.23 AS builder
 
 WORKDIR /app
 
@@ -7,12 +7,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o main .
-
-FROM alpine:latest
-WORKDIR /root/
-
-COPY --from=builder /app/main .
+RUN go build -o main cmd/main.go
 
 EXPOSE 3030
 

@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 
+	"github.com/artyom-kalman/go-song-library/pkg/logger"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 
@@ -14,6 +15,8 @@ func RunMigration() error {
 	if databaseConnection == nil {
 		return fmt.Errorf("Error running migration: database connection is closed")
 	}
+
+	databaseConnection.Exec("DROP TABLE IF EXISTS schema_migrations;")
 
 	driver, err := postgres.WithInstance(databaseConnection.connection, &postgres.Config{})
 	if err != nil {
@@ -30,6 +33,7 @@ func RunMigration() error {
 	}
 
 	err = migration.Up()
+	logger.Logger.Error(err.Error())
 
 	return nil
 }

@@ -43,8 +43,6 @@ CREATE SEQUENCE public.groups_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.groups_id_seq OWNER TO admin;
-
 --
 -- Name: groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
@@ -63,8 +61,6 @@ CREATE TABLE public.lyrics (
 );
 
 
-ALTER TABLE public.lyrics OWNER TO admin;
-
 --
 -- Name: songs; Type: TABLE; Schema: public; Owner: admin
 --
@@ -78,8 +74,6 @@ CREATE TABLE public.songs (
 );
 
 
-ALTER TABLE public.songs OWNER TO admin;
-
 --
 -- Name: songs_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
 --
@@ -92,8 +86,6 @@ CREATE SEQUENCE public.songs_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER SEQUENCE public.songs_id_seq OWNER TO admin;
 
 --
 -- Name: songs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
