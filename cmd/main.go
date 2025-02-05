@@ -13,8 +13,8 @@ import (
 // TODO
 
 // Все поля при добавлении песни
-
-const PORT = ":3030"
+//
+// Endpoint на изменение песни
 
 func main() {
 	logger.InitLogger()
@@ -23,6 +23,11 @@ func main() {
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return
+	}
+
+	serverConfig, err := config.GetServerConfig()
+	if err != nil {
+		logger.Logger.Error(err.Error())
 	}
 
 	databaseConfig, err := config.GetDBConfig()
@@ -37,13 +42,19 @@ func main() {
 		return
 	}
 
+	err = db.RunMigration()
+	if err != nil {
+		logger.Logger.Error(err.Error())
+		return
+	}
+
 	http.HandleFunc("/song", handlers.SongHandler)
 	http.HandleFunc("/songs", handlers.GetSongsHandler)
 	http.HandleFunc("/lyrics", handlers.GetLyricsHandler)
 
-	logger.Logger.Info(fmt.Sprintf("Server is running on %s", PORT))
+	logger.Logger.Info(fmt.Sprintf("Server is running on %s", serverConfig.Port))
 
-	err = http.ListenAndServe(PORT, nil)
+	err = http.ListenAndServe(serverConfig.Port, nil)
 	if err != nil {
 		logger.Logger.Error(err.Error())
 	}
