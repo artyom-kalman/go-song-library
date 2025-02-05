@@ -16,14 +16,9 @@ func TestAddLyricsAlreadyExists(t *testing.T) {
 		},
 	}
 
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		panic(err)
-	}
+	songRepo := NewSongRepo(db.GetDatabase())
 
-	songRepo := NewSongRepo(dbConn)
-
-	err = songRepo.AddLyrycs(&lyrics)
+	err := songRepo.AddLyrycs(&lyrics)
 	if err == nil {
 		t.Errorf("expected error")
 	}
@@ -39,14 +34,9 @@ func TestAddLyricsInvalidSongId(t *testing.T) {
 		},
 	}
 
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		panic(err)
-	}
+	songRepo := NewSongRepo(db.GetDatabase())
 
-	songRepo := NewSongRepo(dbConn)
-
-	err = songRepo.AddLyrycs(&lyrics)
+	err := songRepo.AddLyrycs(&lyrics)
 	if err == nil {
 		t.Errorf("expected no error\ngot %v", err)
 	}

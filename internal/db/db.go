@@ -41,32 +41,6 @@ func InitDatabase(config *config.DBConfig) error {
 	return nil
 }
 
-func ConnectToDB() (*DBConnection, error) {
-	if databaseConnection != nil {
-		return databaseConnection, nil
-	}
-
-	config, err := config.LoadDBConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		config.Host, config.Port, config.Username, config.Password, config.Name,
-	)
-
-	db, err := sql.Open("postgres", connectionString)
-	if err != nil {
-		return nil, err
-	}
-
-	databaseConnection = &DBConnection{
-		connection: db,
-	}
-
-	return databaseConnection, nil
-}
-
 func (db *DBConnection) Query(query string) (*sql.Rows, error) {
 	err := db.connection.Ping()
 	if err != nil {

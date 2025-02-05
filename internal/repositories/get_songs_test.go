@@ -7,16 +7,11 @@ import (
 )
 
 func TestGetSongsNotReturnError(t *testing.T) {
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		panic(err)
-	}
-
-	songRepo := NewSongRepo(dbConn)
+	songRepo := NewSongRepo(db.GetDatabase())
 
 	searchParams := NewSongQueryParams()
 
-	_, err = songRepo.GetSongs(searchParams)
+	_, err := songRepo.GetSongs(searchParams)
 
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -24,12 +19,7 @@ func TestGetSongsNotReturnError(t *testing.T) {
 }
 
 func TestGetSongsByGroupName(t *testing.T) {
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		panic(err)
-	}
-
-	songRepo := NewSongRepo(dbConn)
+	songRepo := NewSongRepo(db.GetDatabase())
 
 	searchParams := NewSongQueryParams()
 	searchParams.GroupName = "Pink Floyd"
@@ -46,12 +36,7 @@ func TestGetSongsByGroupName(t *testing.T) {
 }
 
 func TestGetSongsBySongId(t *testing.T) {
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		panic(err)
-	}
-
-	songRepo := NewSongRepo(dbConn)
+	songRepo := NewSongRepo(db.GetDatabase())
 
 	searchParams := NewSongQueryParams()
 	searchParams.SongId = 1
@@ -68,12 +53,7 @@ func TestGetSongsBySongId(t *testing.T) {
 }
 
 func TestGetSongsByGroupId(t *testing.T) {
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		panic(err)
-	}
-
-	songRepo := NewSongRepo(dbConn)
+	songRepo := NewSongRepo(db.GetDatabase())
 
 	searchParams := NewSongQueryParams()
 	searchParams.GroupId = 1
@@ -90,12 +70,7 @@ func TestGetSongsByGroupId(t *testing.T) {
 }
 
 func TestGetSongsByDateRange(t *testing.T) {
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		panic(err)
-	}
-
-	songRepo := NewSongRepo(dbConn)
+	songRepo := NewSongRepo(db.GetDatabase())
 
 	searchParams := NewSongQueryParams()
 	searchParams.StartDate = "2000-01-01"
@@ -113,18 +88,13 @@ func TestGetSongsByDateRange(t *testing.T) {
 }
 
 func TestGetSongsWithInvalidDateRange(t *testing.T) {
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		panic(err)
-	}
-
-	songRepo := NewSongRepo(dbConn)
+	songRepo := NewSongRepo(db.GetDatabase())
 
 	searchParams := NewSongQueryParams()
 	searchParams.StartDate = "invalid-date"
 	searchParams.EndDate = "2023-12-31"
 
-	_, err = songRepo.GetSongs(searchParams)
+	_, err := songRepo.GetSongs(searchParams)
 
 	if err == nil {
 		t.Error("Expected error for invalid start date, got none")
