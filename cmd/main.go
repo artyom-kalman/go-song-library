@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/artyom-kalman/go-song-library/internal/config"
 	"github.com/artyom-kalman/go-song-library/internal/db"
 	"github.com/artyom-kalman/go-song-library/internal/handlers"
 	"github.com/artyom-kalman/go-song-library/pkg/logger"
@@ -11,12 +12,6 @@ import (
 
 // TODO
 
-// Получение теста песни
-//     GET /lyrics?song-id= &offset= &size=
-
-// Получение всей библиотеки
-//     GET /songs
-//
 // Все поля при добавлении песни
 
 const PORT = ":3030"
@@ -24,9 +19,15 @@ const PORT = ":3030"
 func main() {
 	logger.InitLogger()
 
-	_, err := db.ConnectToDB()
+	databaseConfig, err := config.LoadDBConfig()
 	if err != nil {
-		logger.Logger.Error(fmt.Sprintf("Error connection to database: %s", err.Error()))
+		logger.Logger.Error(err.Error())
+		return
+	}
+
+	err = db.InitDatabase(databaseConfig)
+	if err != nil {
+		logger.Logger.Error(err.Error())
 		return
 	}
 

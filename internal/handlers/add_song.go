@@ -26,16 +26,9 @@ func NewSongHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		logger.Logger.Error(fmt.Sprintf("Error connection to database: %s", err.Error()))
-		return
-	}
+	songRepo := repositories.NewSongRepo(db.GetDatabase())
 
-	songRepo := repositories.NewSongRepo(dbConn)
-
-	err = songRepo.AddSong(&newSong)
+	err := songRepo.AddSong(&newSong)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		logger.Logger.Error(fmt.Sprintf("Error adding new song: %s", err.Error()))

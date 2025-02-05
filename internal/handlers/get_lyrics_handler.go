@@ -19,14 +19,7 @@ func GetLyricsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := db.ConnectToDB()
-	if err != nil {
-		logger.Logger.Debug("Error connection to database")
-		http.Error(w, "Error processign request", http.StatusInternalServerError)
-		return
-	}
-
-	repo := repositories.NewSongRepo(db)
+	repo := repositories.NewSongRepo(db.GetDatabase())
 
 	queryParams, err := getLyricsQueryParamsFromRequest(r)
 	if err != nil {

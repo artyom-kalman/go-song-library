@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -23,14 +22,7 @@ func DeleteSongHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Fatalln("Error connection to database:", err)
-		return
-	}
-
-	songRepo := repositories.NewSongRepo(dbConn)
+	songRepo := repositories.NewSongRepo(db.GetDatabase())
 
 	err = songRepo.DeleteSongById(songId)
 	if err != nil {

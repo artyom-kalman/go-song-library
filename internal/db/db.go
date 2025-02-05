@@ -9,15 +9,41 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var openedConn *DBConnection
+var databaseConnection *DBConnection
 
 type DBConnection struct {
 	connection *sql.DB
 }
 
+func GetDatabase() *DBConnection {
+	databaseConfig, _ := config.LoadDBConfig()
+	if databaseConnection == nil {
+		InitDatabase(databaseConfig)
+	}
+
+	return databaseConnection
+}
+
+func InitDatabase(config *config.DBConfig) error {
+	connectionString := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		config.Host, config.Port, config.Username, config.Password, config.Name,
+	)
+
+	db, err := sql.Open("postgres", connectionString)
+	if err != nil {
+		return err
+	}
+
+	databaseConnection = &DBConnection{
+		connection: db,
+	}
+
+	return nil
+}
+
 func ConnectToDB() (*DBConnection, error) {
-	if openedConn != nil {
-		return openedConn, nil
+	if databaseConnection != nil {
+		return databaseConnection, nil
 	}
 
 	config, err := config.LoadDBConfig()
@@ -34,11 +60,11 @@ func ConnectToDB() (*DBConnection, error) {
 		return nil, err
 	}
 
-	openedConn = &DBConnection{
+	databaseConnection = &DBConnection{
 		connection: db,
 	}
 
-	return openedConn, nil
+	return databaseConnection, nil
 }
 
 func (db *DBConnection) Query(query string) (*sql.Rows, error) {

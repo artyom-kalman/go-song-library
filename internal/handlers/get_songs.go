@@ -18,12 +18,7 @@ func GetSongsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbConn, err := db.ConnectToDB()
-	if err != nil {
-		panic(err)
-	}
-
-	songRepo := repositories.NewSongRepo(dbConn)
+	songRepo := repositories.NewSongRepo(db.GetDatabase())
 
 	searchParams, err := getSongQueryParams(r)
 	if err != nil {
