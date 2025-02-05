@@ -50,7 +50,7 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = songRepo.AddLyrycs(&newLyrics)
 	if err != nil {
-		logger.Error("Failed to add lyrics for the song: ", err)
+		logger.Error("Failed to add lyrics for the song: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
