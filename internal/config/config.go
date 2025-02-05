@@ -6,24 +6,31 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type DBConfig struct {
-	Host     string
-	Port     string
-	Name     string
-	Username string
-	Password string
-}
+var isConfigLoaded bool = false
 
-func LoadDBConfig() (*DBConfig, error) {
+func LoadConfig() error {
 	if _, err := os.Stat(".env"); err == nil {
 		err := godotenv.Load(".env")
 		if err != nil {
-			return nil, err
+			return err
 		}
+		isConfigLoaded = true
 	}
 
 	if _, err := os.Stat("../../.env"); err == nil {
 		err := godotenv.Load("../../.env")
+		if err != nil {
+			return err
+		}
+		isConfigLoaded = true
+	}
+
+	return nil
+}
+
+func GetDBConfig() (*DBConfig, error) {
+	if !isConfigLoaded {
+		err := LoadConfig()
 		if err != nil {
 			return nil, err
 		}
@@ -35,5 +42,17 @@ func LoadDBConfig() (*DBConfig, error) {
 		Name:     os.Getenv("DB_NAME"),
 		Username: os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
+	}, nil
+}
+
+func GetServerConfig() (*ServerConfig, error) {
+	if !isConfigLoaded {
+		if err := LoadConfig(); err != nil {
+			return nil, err
+		}
+	}
+
+	return &ServerConfig{
+		Port: os.Getenv("PORT"),
 	}, nil
 }

@@ -16,7 +16,7 @@ type DBConnection struct {
 }
 
 func GetDatabase() *DBConnection {
-	databaseConfig, _ := config.LoadDBConfig()
+	databaseConfig, _ := config.GetDBConfig()
 	if databaseConnection == nil {
 		InitDatabase(databaseConfig)
 	}

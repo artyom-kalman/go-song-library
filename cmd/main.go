@@ -19,7 +19,13 @@ const PORT = ":3030"
 func main() {
 	logger.InitLogger()
 
-	databaseConfig, err := config.LoadDBConfig()
+	err := config.LoadConfig()
+	if err != nil {
+		logger.Logger.Error(err.Error())
+		return
+	}
+
+	databaseConfig, err := config.GetDBConfig()
 	if err != nil {
 		logger.Logger.Error(err.Error())
 		return
