@@ -86,6 +86,9 @@ const docTemplate = `{
                 "consumes": [
                     "application/json"
                 ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "song"
                 ],
@@ -97,13 +100,16 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.NewSongRequest"
+                            "$ref": "#/definitions/models.NewSong"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Song added successfully"
+                        "description": "Successfully created song",
+                        "schema": {
+                            "$ref": "#/definitions/models.Song"
+                        }
                     },
                     "400": {
                         "description": "Bad request",
@@ -173,7 +179,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "songs"
+                    "song"
                 ],
                 "summary": "Update a song",
                 "parameters": [
@@ -328,13 +334,22 @@ const docTemplate = `{
                 }
             }
         },
-        "models.NewSongRequest": {
+        "models.NewSong": {
             "type": "object",
             "properties": {
                 "group": {
                     "type": "string"
                 },
+                "link": {
+                    "type": "string"
+                },
+                "releaseDate": {
+                    "type": "string"
+                },
                 "song": {
+                    "type": "string"
+                },
+                "text": {
                     "type": "string"
                 }
             }

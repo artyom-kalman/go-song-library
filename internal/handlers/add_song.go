@@ -15,8 +15,9 @@ import (
 // @Description Add a new song and its lyrics to the database
 // @Tags song
 // @Accept json
-// @Param song body models.NewSongRequest true "Song information"
-// @Success 200 "Song added successfully"
+// @Produce json
+// @Param song body models.NewSong true "Song information"
+// @Success 200 {object} models.Song "Successfully created song"
 // @Failure 400 {string} string "Bad request"
 // @Failure 405 {string} string "Method not allowed"
 // @Failure 500 {string} string "Internal server error"
@@ -45,7 +46,7 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 
 	songRepo := repositories.NewSongRepo(db.GetDatabase())
 
-	newSongId, err := songRepo.AddSong(&newSong)
+	song, err := songRepo.AddSong(&newSong)
 	if err != nil {
 		logger.Error("Failed to add song: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -54,7 +55,7 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 
 	songLyrics := services.ParseSongText(newSong.Text)
 	newLyrics := models.NewLyrics{
-		SongId: newSongId,
+		SongId: song.Id,
 		Text:   songLyrics,
 	}
 
@@ -65,7 +66,11 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(&song); err != nil {
+		logger.Error("Failed to encode response: %v", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	logger.Info("Created new song: %s by %s", newSong.Name, newSong.Group)
 }

@@ -7,35 +7,41 @@ import (
 	"github.com/artyom-kalman/go-song-library/internal/models"
 )
 
-func (repo *SongRepo) AddSong(song *models.NewSong) (int, error) {
+func (repo *SongRepo) AddSong(song *models.NewSong) (*models.Song, error) {
 	group, err := repo.GetGroudByName(song.Group)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	query := getNewSongQuery(song, group)
 	queryResult, err := repo.conn.Query(query)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	songId := getNewSongIdFromQueryResult(queryResult)
+	newSong := getNewSongIdFromQueryResult(queryResult)
 
-	return songId, nil
+	return newSong, nil
 }
 
-func getNewSongIdFromQueryResult(queryResult *sql.Rows) int {
-	var songId int
+func getNewSongIdFromQueryResult(queryResult *sql.Rows) *models.Song {
+	var song models.Song
 
 	queryResult.Next()
-	queryResult.Scan(&songId)
+	queryResult.Scan(
+		&song.Id,
+		&song.Name,
+		&song.GroupId,
+		&song.ReleaseDate,
+		&song.Link,
+	)
 
-	return songId
+	return &song
 }
 
 func getNewSongQuery(song *models.NewSong, group *models.Group) string {
 	return fmt.Sprintf(
-		"INSERT INTO songs (name, group_id, release_date, link) VALUES ('%s', %d, '%s', '%s') RETURNING id;",
+		"INSERT INTO songs (name, group_id, release_date, link) VALUES ('%s', %d, '%s', '%s') RETURNING id, name, group_id, release_date, link;",
 		song.Name,
 		group.Id,
 		formatDate(song.ReleaseDate),

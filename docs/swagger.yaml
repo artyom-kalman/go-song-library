@@ -9,11 +9,17 @@ definitions:
       songId:
         type: integer
     type: object
-  models.NewSongRequest:
+  models.NewSong:
     properties:
       group:
         type: string
+      link:
+        type: string
+      releaseDate:
+        type: string
       song:
+        type: string
+      text:
         type: string
     type: object
   models.Song:
@@ -153,7 +159,7 @@ paths:
             type: string
       summary: Update a song
       tags:
-      - songs
+      - song
     post:
       consumes:
       - application/json
@@ -164,10 +170,14 @@ paths:
         name: song
         required: true
         schema:
-          $ref: '#/definitions/models.NewSongRequest'
+          $ref: '#/definitions/models.NewSong'
+      produces:
+      - application/json
       responses:
         "200":
-          description: Song added successfully
+          description: Successfully created song
+          schema:
+            $ref: '#/definitions/models.Song'
         "400":
           description: Bad request
           schema:
