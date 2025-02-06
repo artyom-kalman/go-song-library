@@ -103,10 +103,18 @@
 
 2. Создайте `.env` файл для настройки переменных окружения (пример `.env` файла):
    ```env
-   POSTGRES_USER=postgres
-   POSTGRES_PASSWORD=yourpassword
-   POSTGRES_DB=yourdatabase
-   APP_PORT=8080
+    # Database connection config
+    DB_HOST=db
+    DB_PORT=5432
+    POSTGRES_USER=postgres
+    POSTGRES_PASSWORD=password
+    POSTGRES_DB=song_lib
+
+    # Server config
+    APP_PORT=:3030
+
+    # SongInfoAPI config
+    SONG_INFO_API=someapi
    ```
 
 3. Запустите Docker Compose:

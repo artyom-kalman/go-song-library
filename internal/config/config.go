@@ -67,6 +67,6 @@ func GetServerConfig() (*ServerConfig, error) {
 	}, nil
 }
 
-func GetOpenAPIURL() string {
-	return os.Getenv("OPENAPI_URL")
+func GetSongInfoApi() string {
+	return os.Getenv("SONG_INFO_API")
 }
