@@ -7,12 +7,7 @@ import (
 	"github.com/artyom-kalman/go-song-library/internal/models"
 )
 
-func (repo *SongRepo) AddSong(song *models.NewSong) (*models.Song, error) {
-	group, err := repo.GetGroudByName(song.Group)
-	if err != nil {
-		return nil, err
-	}
-
+func (repo *SongRepo) AddSong(song *models.NewSong, group *models.Group) (*models.Song, error) {
 	query := getNewSongQuery(song, group)
 	queryResult, err := repo.conn.Query(query)
 	if err != nil {

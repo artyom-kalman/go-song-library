@@ -48,9 +48,9 @@ func GetDBConfig() (*DBConfig, error) {
 	return &DBConfig{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("DB_PORT"),
-		Name:     os.Getenv("DB_NAME"),
-		Username: os.Getenv("DB_USER"),
-		Password: os.Getenv("DB_PASSWORD"),
+		Name:     os.Getenv("POSTGRES_DB"),
+		Username: os.Getenv("POSTGRES_USER"),
+		Password: os.Getenv("POSTGRES_PASSWORD"),
 	}, nil
 }
 
@@ -63,7 +63,7 @@ func GetServerConfig() (*ServerConfig, error) {
 
 	logger.Logger.Info("Loaded server configuration")
 	return &ServerConfig{
-		Port: os.Getenv("PORT"),
+		Port: os.Getenv("APP_PORT"),
 	}, nil
 }
 

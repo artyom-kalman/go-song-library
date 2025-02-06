@@ -1,4 +1,4 @@
-FROM golang:1.23 AS builder
+FROM golang:1.23
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o main cmd/main.go
+RUN go build -o main main.go
 
 EXPOSE 3030
 

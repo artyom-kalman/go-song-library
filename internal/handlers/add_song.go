@@ -16,7 +16,7 @@ import (
 // @Tags song
 // @Accept json
 // @Produce json
-// @Param song body models.NewSong true "Song information"
+// @Param song body models.NewSongRequest true "Song information"
 // @Success 200 {object} models.Song "Successfully created song"
 // @Failure 400 {string} string "Bad request"
 // @Failure 405 {string} string "Method not allowed"
@@ -31,14 +31,15 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var newSong models.NewSong
-	if err := json.NewDecoder(r.Body).Decode(&newSong); err != nil {
+	var newSongRequest *models.NewSongRequest
+	if err := json.NewDecoder(r.Body).Decode(&newSongRequest); err != nil {
 		logger.Error("Failed to decode request body: %v", err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err := services.GetSongInfo(&newSong); err != nil {
+	song, err := services.GetSongInfo(newSongRequest)
+	if err != nil {
 		logger.Error("Failed to get song info: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -46,16 +47,29 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 
 	songRepo := repositories.NewSongRepo(db.GetDatabase())
 
-	song, err := songRepo.AddSong(&newSong)
+	var group *models.Group
+	if !songRepo.IsGroupExist(song.Group) {
+		group, err = songRepo.AddGroup(song.Group)
+		if err != nil {
+			return
+		}
+	} else {
+		group, err = songRepo.GetGroudByName(song.Group)
+		if err != nil {
+			return
+		}
+	}
+
+	newSong, err := songRepo.AddSong(song, group)
 	if err != nil {
 		logger.Error("Failed to add song: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	songLyrics := services.ParseSongText(newSong.Text)
+	songLyrics := services.ParseSongText(song.Text)
 	newLyrics := models.NewLyrics{
-		SongId: song.Id,
+		SongId: newSong.Id,
 		Text:   songLyrics,
 	}
 
@@ -72,5 +86,5 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	logger.Info("Created new song: %s by %s", newSong.Name, newSong.Group)
+	logger.Info("Created new song: %s", newSong.Name)
 }

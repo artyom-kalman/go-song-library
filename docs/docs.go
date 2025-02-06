@@ -100,7 +100,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.NewSong"
+                            "$ref": "#/definitions/models.NewSongRequest"
                         }
                     }
                 ],
@@ -334,22 +334,13 @@ const docTemplate = `{
                 }
             }
         },
-        "models.NewSong": {
+        "models.NewSongRequest": {
             "type": "object",
             "properties": {
                 "group": {
                     "type": "string"
                 },
-                "link": {
-                    "type": "string"
-                },
-                "releaseDate": {
-                    "type": "string"
-                },
                 "song": {
-                    "type": "string"
-                },
-                "text": {
                     "type": "string"
                 }
             }
