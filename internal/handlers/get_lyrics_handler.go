@@ -11,6 +11,19 @@ import (
 	"github.com/artyom-kalman/go-song-library/pkg/logger"
 )
 
+// @Summary Get song lyrics
+// @Description Returns lyrics for a specific song
+// @Tags lyrics
+// @Accept json
+// @Produce json
+// @Param songid query int true "Song ID"
+// @Param offset query int false "Offset for pagination"
+// @Param limit query int false "Limit for pagination"
+// @Success 200 {array} models.Lyrics
+// @Failure 400 {object} string "Invalid arguments"
+// @Failure 405 {object} string "Wrong method"
+// @Failure 500 {object} string "Error processing request"
+// @Router /lyrics [get]
 func GetLyricsHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Logger.Info("Received GetLyrics request")
 

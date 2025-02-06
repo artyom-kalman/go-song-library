@@ -10,6 +10,24 @@ import (
 	"github.com/artyom-kalman/go-song-library/pkg/logger"
 )
 
+// @Summary Gets songs by specified conditions
+// @Description Gets songs by name, id, release date, etc.
+// @Tags songs
+// @Accept json
+// @Produce json
+// @Param songid query int false "Song ID"
+// @Param songname query string false "Song Name"
+// @Param groupid query int false "Group ID"
+// @Param groupname query string false "Group Name"
+// @Param releasedate-start query string false "Release date start in YYYY-MM-DD format"
+// @Param releasedate-end query string false "Release date end in YYYY-MM-DD format"
+// @Param offset query int false "Offset for pagination"
+// @Param limit query int false "Limit for pagination"
+// @Success 200 {array} models.Song
+// @Failure 400 {object} map[string]interface{}
+// @Failure 405 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /songs [get]
 func GetSongsHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Info("New getsongs request")
 

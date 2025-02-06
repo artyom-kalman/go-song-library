@@ -1,0 +1,207 @@
+basePath: /
+definitions:
+  models.Lyrics:
+    properties:
+      lyrics:
+        type: string
+      orderN:
+        type: integer
+      songId:
+        type: integer
+    type: object
+  models.NewSongRequest:
+    properties:
+      group:
+        type: string
+      song:
+        type: string
+    type: object
+  models.Song:
+    properties:
+      groupId:
+        type: integer
+      groupName:
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      name:
+        type: string
+      releaseDate:
+        type: string
+    type: object
+host: localhost:3030
+info:
+  contact: {}
+  description: API for managing a song library
+  title: Song Library API
+  version: "1.0"
+paths:
+  /lyrics:
+    get:
+      consumes:
+      - application/json
+      description: Returns lyrics for a specific song
+      parameters:
+      - description: Song ID
+        in: query
+        name: songid
+        required: true
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Lyrics'
+            type: array
+        "400":
+          description: Invalid arguments
+          schema:
+            type: string
+        "405":
+          description: Wrong method
+          schema:
+            type: string
+        "500":
+          description: Error processing request
+          schema:
+            type: string
+      summary: Get song lyrics
+      tags:
+      - lyrics
+  /song:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a song by its ID from the database.
+      parameters:
+      - description: Song ID to delete
+        in: query
+        name: songid
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Successfully deleted
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+      summary: Delete song by ID
+      tags:
+      - song
+    post:
+      consumes:
+      - application/json
+      description: Add a new song and its lyrics to the database
+      parameters:
+      - description: Song information
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/models.NewSongRequest'
+      responses:
+        "200":
+          description: Song added successfully
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a new song
+      tags:
+      - song
+  /songs:
+    get:
+      consumes:
+      - application/json
+      description: Gets songs by name, id, release date, etc.
+      parameters:
+      - description: Song ID
+        in: query
+        name: songid
+        type: integer
+      - description: Song Name
+        in: query
+        name: songname
+        type: string
+      - description: Group ID
+        in: query
+        name: groupid
+        type: integer
+      - description: Group Name
+        in: query
+        name: groupname
+        type: string
+      - description: Release date start in YYYY-MM-DD format
+        in: query
+        name: releasedate-start
+        type: string
+      - description: Release date end in YYYY-MM-DD format
+        in: query
+        name: releasedate-end
+        type: string
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      - description: Limit for pagination
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Song'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "405":
+          description: Method Not Allowed
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Gets songs by specified conditions
+      tags:
+      - songs
+schemes:
+- http
+swagger: "2.0"

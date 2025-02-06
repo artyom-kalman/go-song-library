@@ -11,6 +11,16 @@ import (
 	"github.com/artyom-kalman/go-song-library/pkg/logger"
 )
 
+// @Summary Create a new song
+// @Description Add a new song and its lyrics to the database
+// @Tags song
+// @Accept json
+// @Param song body models.NewSongRequest true "Song information"
+// @Success 200 "Song added successfully"
+// @Failure 400 {string} string "Bad request"
+// @Failure 405 {string} string "Method not allowed"
+// @Failure 500 {string} string "Internal server error"
+// @Router /song [post]
 func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Received newsong request")
 

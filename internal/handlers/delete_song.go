@@ -10,6 +10,15 @@ import (
 	"github.com/artyom-kalman/go-song-library/pkg/logger"
 )
 
+// @Summary Delete song by ID
+// @Description Delete a song by its ID from the database.
+// @Tags song
+// @Accept json
+// @Param songid query integer true "Song ID to delete"
+// @Success 200 {string} string "Successfully deleted"
+// @Failure 400 {string} string "Bad request"
+// @Failure 405 {string} string "Method not allowed"
+// @Router /song [delete]
 func DeleteSongHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Received deletesong request")
 
