@@ -18,7 +18,6 @@ import (
 // @host localhost:3030
 // @BasePath /
 // @schemes http
-
 func main() {
 	logger.InitLogger()
 

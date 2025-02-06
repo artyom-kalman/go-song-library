@@ -31,6 +31,19 @@ definitions:
       releaseDate:
         type: string
     type: object
+  models.UpdateSongRequest:
+    properties:
+      id:
+        type: integer
+      link:
+        type: string
+      name:
+        type: string
+      releaseDate:
+        type: string
+      text:
+        type: string
+    type: object
 host: localhost:3030
 info:
   contact: {}
@@ -108,6 +121,39 @@ paths:
       summary: Delete song by ID
       tags:
       - song
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing song in the library
+      parameters:
+      - description: Song update info
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateSongRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Song'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "405":
+          description: Method not allowed
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Update a song
+      tags:
+      - songs
     post:
       consumes:
       - application/json
