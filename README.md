@@ -121,7 +121,3 @@
    ```sh
    docker-compose up --build
    ```
-
----
-
-Если хочешь, могу сразу добавить `docker-compose.yml` или `.env` пример! 😊 go-music-library
