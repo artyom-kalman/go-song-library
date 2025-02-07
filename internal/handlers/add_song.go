@@ -66,6 +66,7 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	newSong.GroupName = group.Name
 
 	songLyrics := services.ParseSongText(song.Text)
 	newLyrics := models.NewLyrics{
@@ -80,7 +81,7 @@ func AddSongHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(&song); err != nil {
+	if err := json.NewEncoder(w).Encode(&newSong); err != nil {
 		logger.Error("Failed to encode response: %v", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

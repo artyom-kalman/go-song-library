@@ -1,6 +1,6 @@
 package models
 
 type NewSongRequest struct {
-	Song  string
-	Group string
+	Song  string `json:"song"`
+	Group string `json:"group"`
 }

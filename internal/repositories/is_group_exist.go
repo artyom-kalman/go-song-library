@@ -3,7 +3,7 @@ package repositories
 import "fmt"
 
 func (songRepo *SongRepo) IsGroupExist(groupName string) bool {
-	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM songs WHERE group_name = '%s');", groupName)
+	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM groups WHERE name = '%s');", groupName)
 
 	var exists bool
 	queryResult, err := songRepo.conn.Query(query)

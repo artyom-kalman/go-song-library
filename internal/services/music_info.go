@@ -27,13 +27,15 @@ func GetSongInfo(song *models.NewSongRequest) (*models.NewSong, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&newSong); err != nil {
 		return nil, err
 	}
+	newSong.Name = song.Song
+	newSong.Group = song.Group
 
-	logger.Debug("Added info to song %v", song)
+	logger.Debug("Added info to song %s %s", song.Song, song.Group)
 	return &newSong, nil
 }
 
 func getApiUrl(songName string, groupName string) string {
-	baseUrl := fmt.Sprintf("%s/info", config.GetOpenAPIURL())
+	baseUrl := fmt.Sprintf("%s/info", config.GetSongInfoApi())
 	params := url.Values{}
 	params.Add("song", songName)
 	params.Add("group", groupName)
