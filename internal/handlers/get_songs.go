@@ -6,14 +6,14 @@ import (
 	"strconv"
 
 	"github.com/artyom-kalman/go-song-library/internal/db"
+	"github.com/artyom-kalman/go-song-library/internal/models"
 	"github.com/artyom-kalman/go-song-library/internal/repositories"
 	"github.com/artyom-kalman/go-song-library/pkg/logger"
 )
 
-// @Summary Gets songs by specified conditions
+// @Summary Gets song library with filters
 // @Description Gets songs by name, id, release date, etc.
 // @Tags songs
-// @Accept json
 // @Produce json
 // @Param songid query int false "Song ID"
 // @Param songname query string false "Song Name"
@@ -24,115 +24,98 @@ import (
 // @Param offset query int false "Offset for pagination"
 // @Param limit query int false "Limit for pagination"
 // @Success 200 {array} models.Song
-// @Failure 400 {object} map[string]interface{}
-// @Failure 405 {object} map[string]interface{}
-// @Failure 500 {object} map[string]interface{}
+// @Failure 400 {object} string "Invalid query parameters"
+// @Failure 405 {object} string "Method not allowed"
+// @Failure 500 {object} string "Internal server error"
 // @Router /songs [get]
 func HandleGetSongRequest(w http.ResponseWriter, r *http.Request) {
-	logger.Info("New getsongs request")
+	logger.Info("Received getsongs request")
 
 	if r.Method != http.MethodGet {
-		logger.Error("Wrong HTTP method: %s", r.Method)
-		http.Error(w, "Wrong method", http.StatusMethodNotAllowed)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-
-	songRepo := repositories.NewSongRepo(db.GetDatabase())
 
 	searchParams, err := getSongQueryParams(r)
 	if err != nil {
 		logger.Error("Error parsing query parameters: %v", err)
-		http.Error(w, "Error parsing query parameters", http.StatusBadRequest)
+		http.Error(w, "Invalid query parameters", http.StatusBadRequest)
 		return
 	}
 
-	songs, err := songRepo.GetSongs(searchParams)
+	songs, err := getSongs(searchParams)
 	if err != nil {
-		logger.Error("Error filtering songs: %v", err)
-		http.Error(w, "Error filtering songs", http.StatusInternalServerError)
+		logger.Error("Error getting songs: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	songsJson, err := json.Marshal(songs)
-	if err != nil {
-		logger.Error("Error encoding songs to JSON: %v", err)
-		http.Error(w, "Error encoding songs", http.StatusInternalServerError)
+	if err = json.NewEncoder(w).Encode(songs); err != nil {
+		logger.Error("Error encoding songs: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(songsJson)
-
-	logger.Info("Getsongs request served")
+	w.WriteHeader(http.StatusOK)
+	logger.Info("Successfully served getsongs request")
 }
 
 func getSongQueryParams(r *http.Request) (*repositories.SongQueryParams, error) {
 	queryParams := r.URL.Query()
-
-	songId := queryParams.Get("songid")
-	songName := queryParams.Get("songname")
-
-	groupId := queryParams.Get("groupid")
-	groupName := queryParams.Get("groupname")
-
-	releaseDataStart := queryParams.Get("releasedate-start")
-	releaseDateEnd := queryParams.Get("releasedate-end")
-
-	offset := queryParams.Get("offset")
-	limit := queryParams.Get("limit")
-
 	searchParams := repositories.NewSongQueryParams()
 
-	searchParams.SongName = songName
-	searchParams.GroupName = groupName
+	searchParams.SongName = queryParams.Get("songname")
+	searchParams.GroupName = queryParams.Get("groupname")
+	searchParams.StartDate = queryParams.Get("releasedate-start")
+	searchParams.EndDate = queryParams.Get("releasedate-end")
 
-	searchParams.StartDate = releaseDataStart
-	searchParams.EndDate = releaseDateEnd
-
-	var err error
-	if groupId != "" {
-		searchParams.GroupId, err = strconv.Atoi(groupId)
+	groupIdParam := queryParams.Get("groupid")
+	if groupIdParam != "" {
+		groupId, err := strconv.Atoi(groupIdParam)
 		if err != nil {
 			return nil, err
 		}
+		searchParams.GroupId = groupId
 	}
 
-	if songId != "" {
-		searchParams.SongId, err = strconv.Atoi(songId)
+	songIdParam := queryParams.Get("songid")
+	if songIdParam != "" {
+		songId, err := strconv.Atoi(songIdParam)
 		if err != nil {
 			return nil, err
 		}
+		searchParams.SongId = songId
 	}
 
-	if offset != "" {
-		searchParams.Offset, err = strconv.Atoi(offset)
+	offsetParam := queryParams.Get("offset")
+	if offsetParam != "" {
+		offset, err := strconv.Atoi(offsetParam)
 		if err != nil {
 			return nil, err
 		}
+		searchParams.Offset = offset
 	}
 
-	if limit != "" {
-		searchParams.Limit, err = strconv.Atoi(limit)
+	limitParam := queryParams.Get("limit")
+	if limitParam != "" {
+		limit, err := strconv.Atoi(limitParam)
 		if err != nil {
 			return nil, err
 		}
+		searchParams.Limit = limit
 	}
 
 	return searchParams, nil
 }
 
-func validateSearchSongParams(searchParams *repositories.SongQueryParams) bool {
-	if searchParams.SongId < 0 {
-		return false
+func getSongs(searchParams *repositories.SongQueryParams) ([]*models.Song, error) {
+	songRepo := repositories.NewSongRepo(db.GetDatabase())
+
+	songs, err := songRepo.GetSongs(searchParams)
+	if err != nil {
+		return nil, err
 	}
-	if searchParams.GroupId < 0 {
-		return false
-	}
-	if searchParams.Offset < 0 {
-		return false
-	}
-	if searchParams.Limit < 0 {
-		return false
-	}
-	return true
+
+	return songs, nil
 }
