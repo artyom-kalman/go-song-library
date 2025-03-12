@@ -7,6 +7,7 @@ import (
 	"github.com/artyom-kalman/go-song-library/internal/db"
 	"github.com/artyom-kalman/go-song-library/internal/handlers"
 	"github.com/artyom-kalman/go-song-library/pkg/logger"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	_ "github.com/artyom-kalman/go-song-library/docs"
 )
@@ -64,7 +65,7 @@ func main() {
 	http.HandleFunc("/song", handlers.HandleSongRequest)
 	http.HandleFunc("/songs", handlers.HandleGetSongRequest)
 	http.HandleFunc("/lyrics", handlers.HandleGetLyricsRequest)
-	http.HandleFunc("/swagger/", handlers.HandleSwagger)
+	http.HandleFunc("/swagger/", httpSwagger.WrapHandler)
 
 	logger.Info("Server is running on %s", serverConfig.Port)
 
