@@ -28,7 +28,7 @@ import (
 // @Failure 405 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /songs [get]
-func GetSongsHandler(w http.ResponseWriter, r *http.Request) {
+func HandleGetSongRequest(w http.ResponseWriter, r *http.Request) {
 	logger.Info("New getsongs request")
 
 	if r.Method != http.MethodGet {

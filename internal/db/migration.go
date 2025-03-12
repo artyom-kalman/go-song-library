@@ -12,19 +12,18 @@ import (
 )
 
 func RunMigration() error {
-	logger.Logger.Debug("Running migration...")
+	logger.Info("Running migration...")
 
 	if databaseConnection == nil {
 		return fmt.Errorf("Error running migration: database connection is closed")
 	}
 
-	databaseConnection.Exec("DROP TABLE IF EXISTS schema_migrations;")
+	// databaseConnection.Exec("DROP TABLE IF EXISTS schema_migrations;")
 
 	driver, err := postgres.WithInstance(databaseConnection.connection, &postgres.Config{})
 	if err != nil {
 		return err
 	}
-
 	migration, err := migrate.NewWithDatabaseInstance(
 		"file://migrations/",
 		"song_lib",
@@ -35,10 +34,12 @@ func RunMigration() error {
 	}
 
 	err = migration.Up()
-	if err != nil {
-		logger.Logger.Error(err.Error())
+	if err == migrate.ErrNoChange {
+		logger.Info("Database schema is up to date")
+	} else if err != nil {
+		logger.Error(err.Error())
 	} else {
-		logger.Logger.Info("Migrated database schema")
+		logger.Info("Migrated database schema")
 	}
 
 	return nil

@@ -24,7 +24,7 @@ import (
 // @Failure 405 {object} string "Wrong method"
 // @Failure 500 {object} string "Error processing request"
 // @Router /lyrics [get]
-func GetLyricsHandler(w http.ResponseWriter, r *http.Request) {
+func HandleGetLyricsRequest(w http.ResponseWriter, r *http.Request) {
 	logger.Logger.Info("Received GetLyrics request")
 
 	if r.Method != http.MethodGet {

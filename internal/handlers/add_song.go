@@ -23,7 +23,7 @@ import (
 // @Failure 500 {string} string "Internal server error"
 // @Router /song [post]
 func AddSongHandler(w http.ResponseWriter, r *http.Request) {
-	logger.Info("Received newsong request")
+	logger.Info("Received request for adding a new song")
 
 	if r.Method != http.MethodPost {
 		logger.Error("Method not allowed: %s", r.Method)

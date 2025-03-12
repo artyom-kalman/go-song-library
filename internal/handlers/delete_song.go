@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -13,52 +13,60 @@ import (
 // @Summary Delete song by ID
 // @Description Delete a song by its ID from the database.
 // @Tags song
-// @Accept json
 // @Param songid query integer true "Song ID to delete"
-// @Success 200 {string} string "Successfully deleted"
-// @Failure 400 {string} string "Bad request"
+// @Success 200 {string} string "Successfully deleted song"
+// @Failure 400 {string} string "Invalid song id"
+// @Failure 404 {string} string "Song not found"
 // @Failure 405 {string} string "Method not allowed"
+// @Failure 500 {string} string "Internal server error"
 // @Router /song [delete]
 func DeleteSongHandler(w http.ResponseWriter, r *http.Request) {
-	logger.Info("Received deletesong request")
+	logger.Info("Received request for deleting a song")
 
 	if r.Method != http.MethodDelete {
-		logger.Error("Invalid request method: %s", r.Method)
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		logger.Error("Method not allowed: %s", r.Method)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
 	songId, err := getSongIdFromRequest(r)
 	if err != nil {
-		logger.Error("Failed to get song ID from request: %v", err)
-		http.Error(w, "Require song id", http.StatusBadRequest)
+		logger.Error("Invalid song id: %v", err)
+		http.Error(w, "Invalid song id", http.StatusBadRequest)
 		return
 	}
 
-	songRepo := repositories.NewSongRepo(db.GetDatabase())
-
-	err = songRepo.DeleteSongById(songId)
+	err = deleteSongById(songId)
 	if err != nil {
-		logger.Error("Failed to delete song %d: %v", songId, err)
-		http.Error(w, "Error finding song with given id", http.StatusBadRequest)
+		logger.Error("Error deleting song %d: %v", songId, err)
+		if err == repositories.ErrSongNotFound {
+			http.Error(w, "Song not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-
-	logger.Info("Deleted song %d", songId)
-
+	logger.Info("Successfully deleted song", songId)
 }
 
 func getSongIdFromRequest(r *http.Request) (int, error) {
-	if !r.URL.Query().Has("songid") {
-		return 0, fmt.Errorf("Provide songid")
+	songIdParam := r.URL.Query().Get("songid")
+	if songIdParam == "" {
+		return 0, errors.New("Song id is required")
 	}
 
-	songId, err := strconv.Atoi(r.URL.Query().Get("songid"))
+	songId, err := strconv.Atoi(songIdParam)
 	if err != nil {
-		return 0, nil
+		return 0, errors.New("Song id must be a integer")
 	}
 
 	return songId, nil
+}
+
+func deleteSongById(songId int) error {
+	songRepo := repositories.NewSongRepo(db.GetDatabase())
+
+	return songRepo.DeleteSongById(songId)
 }

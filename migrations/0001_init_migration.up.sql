@@ -1,6 +1,3 @@
---
--- PostgreSQL database dump
---
 CREATE TABLE IF NOT EXISTS public.groups (
     id serial NOT NULL PRIMARY KEY,
     name text NOT NULL
@@ -20,7 +17,3 @@ CREATE TABLE IF NOT EXISTS public.songs (
     release_date date NOT NULL,
     link text NOT NULL
 );
-
---
--- PostgreSQL database dump complete
---

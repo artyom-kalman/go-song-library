@@ -30,7 +30,7 @@ func InitDatabase(config *config.DBConfig) error {
 		config.Host, config.Port, config.Username, config.Password, config.Name,
 	)
 
-	logger.Debug("Attempt to connect to database...")
+	logger.Info("Attempt to connect to database...")
 
 	db, err := sql.Open("postgres", connectionString)
 	if err != nil {
