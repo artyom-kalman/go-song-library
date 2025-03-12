@@ -17,40 +17,51 @@ import (
 // @Produce json
 // @Param song body models.UpdateSongRequest true "Song update info"
 // @Success 200 {object} models.Song
-// @Failure 400 {string} string "Bad request"
+// @Failure 400 {string} string "Error decoding request body"
+// @Failure 404 {string} string "Song not found"
 // @Failure 405 {string} string "Method not allowed"
 // @Failure 500 {string} string "Internal server error"
 // @Router /song [patch]
-func UpdateSongHandler(w http.ResponseWriter, r *http.Request) {
-	logger.Info("New updatesong request received")
+func HandleUpdateSongRequest(w http.ResponseWriter, r *http.Request) {
+	logger.Info("Recieved request to update song")
 
-	if r.Method != http.MethodPatch {
-		logger.Info("Invalid request method received: %s", r.Method)
-		http.Error(w, "Wrong method: expected PATCH", http.StatusMethodNotAllowed)
+	var song *models.UpdateSongRequestBody
+	if err := json.NewDecoder(r.Body).Decode(song); err != nil {
+		logger.Info("Error decoding request body: %v", err)
+		http.Error(w, "Error decoding request body", http.StatusBadRequest)
+		return
+	}
+	logger.Debug("Update song request body: %+v", song)
+
+	updatedSong, err := updateSong(song)
+	if err != nil {
+		logger.Info("Error updating song: %v", err)
+		if err == repositories.ErrSongNotFound {
+			http.Error(w, "Song not found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+		}
+		return
+	}
+	logger.Debug("Updated song: %+v", updatedSong)
+
+	if err := json.NewEncoder(w).Encode(updatedSong); err != nil {
+		logger.Info("Error encoding response: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
-	var song models.UpdateSongRequest
-	if err := json.NewDecoder(r.Body).Decode(&song); err != nil {
-		logger.Info("Failed to decode request body: %v", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	w.WriteHeader(http.StatusOK)
+	logger.Info("Successfully updated song")
+}
 
+func updateSong(song *models.UpdateSongRequestBody) (*models.Song, error) {
 	songRepo := repositories.NewSongRepo(db.GetDatabase())
 
-	updatedSong, err := songRepo.UpdateSong(&song)
+	updatedSong, err := songRepo.UpdateSong(song)
 	if err != nil {
-		logger.Info("Failed to update song: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
-	if err := json.NewEncoder(w).Encode(&updatedSong); err != nil {
-		logger.Info("Failed to encode response: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	logger.Info("Song update request completed successfully")
+	return updatedSong, nil
 }

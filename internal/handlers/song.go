@@ -5,13 +5,13 @@ import "net/http"
 func HandleSongRequest(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
-		AddSongHandler(w, r)
+		HandleAddSongRequest(w, r)
 	case http.MethodPatch:
-		UpdateSongHandler(w, r)
+		HandleUpdateSongRequest(w, r)
 	case http.MethodDelete:
-		DeleteSongHandler(w, r)
+		HandleDeleteSongRequest(w, r)
 	default:
-		w.WriteHeader(http.StatusMethodNotAllowed)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 }

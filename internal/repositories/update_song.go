@@ -6,7 +6,7 @@ import (
 	"github.com/artyom-kalman/go-song-library/internal/models"
 )
 
-func (songRepo *SongRepo) UpdateSong(song *models.UpdateSongRequest) (*models.Song, error) {
+func (songRepo *SongRepo) UpdateSong(song *models.UpdateSongRequestBody) (*models.Song, error) {
 	query := fmt.Sprintf(
 		"UPDATE songs SET name = '%s', release_date = '%s', link = '%s' WHERE id = %d RETURNING id, name, group_id, release_date, link",
 		song.Name, song.ReleaseDate, song.Link, song.Id,
@@ -17,9 +17,12 @@ func (songRepo *SongRepo) UpdateSong(song *models.UpdateSongRequest) (*models.So
 		return nil, err
 	}
 
-	var updatedSong models.Song
+	isSongUpdated := queryResult.Next()
+	if !isSongUpdated {
+		return nil, ErrSongNotFound
+	}
 
-	queryResult.Next()
+	var updatedSong models.Song
 	queryResult.Scan(
 		&updatedSong.Id,
 		&updatedSong.Name,

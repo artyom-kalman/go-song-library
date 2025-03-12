@@ -1,6 +1,6 @@
 package models
 
-type UpdateSongRequest struct {
+type UpdateSongRequestBody struct {
 	Id          int    `json:"id"`
 	Name        string `json:"name"`
 	ReleaseDate string `json:"releaseDate"`

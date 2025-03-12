@@ -22,7 +22,7 @@ import (
 // @Failure 405 {string} string "Method not allowed"
 // @Failure 500 {string} string "Internal server error"
 // @Router /song [post]
-func AddSongHandler(w http.ResponseWriter, r *http.Request) {
+func HandleAddSongRequest(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Received request for adding a new song")
 
 	if r.Method != http.MethodPost {

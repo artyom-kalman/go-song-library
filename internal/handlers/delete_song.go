@@ -20,14 +20,8 @@ import (
 // @Failure 405 {string} string "Method not allowed"
 // @Failure 500 {string} string "Internal server error"
 // @Router /song [delete]
-func DeleteSongHandler(w http.ResponseWriter, r *http.Request) {
+func HandleDeleteSongRequest(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Received request for deleting a song")
-
-	if r.Method != http.MethodDelete {
-		logger.Error("Method not allowed: %s", r.Method)
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
 
 	songId, err := getSongIdFromRequest(r)
 	if err != nil {
