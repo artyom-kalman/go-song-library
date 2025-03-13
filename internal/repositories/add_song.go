@@ -14,12 +14,13 @@ func (repo *SongRepo) AddSong(song *models.NewSong, group *models.Group) (*model
 		return nil, err
 	}
 
-	newSong := getNewSongFromQueryResult(queryResult)
+	newSong := newSongFromQueryResult(queryResult)
+	newSong.GroupName = group.Name
 
 	return newSong, nil
 }
 
-func getNewSongFromQueryResult(queryResult *sql.Rows) *models.Song {
+func newSongFromQueryResult(queryResult *sql.Rows) *models.Song {
 	var song models.Song
 
 	queryResult.Next()

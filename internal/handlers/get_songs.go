@@ -42,6 +42,7 @@ func HandleGetSongRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid query parameters", http.StatusBadRequest)
 		return
 	}
+	logger.Debug("Getsong parameters: %+v", searchParams)
 
 	songs, err := getSongs(searchParams)
 	if err != nil {
@@ -57,7 +58,6 @@ func HandleGetSongRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 	logger.Info("Successfully served getsongs request")
 }
 

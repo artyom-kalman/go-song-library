@@ -17,56 +17,57 @@ import (
 // @Accept json
 // @Produce json
 // @Param song body models.NewSongRequest true "Song information"
-// @Success 200 {object} models.Song "Successfully created song"
+// @Success 200 {object} models.Song
 // @Failure 400 {string} string "Bad request"
 // @Failure 405 {string} string "Method not allowed"
 // @Failure 500 {string} string "Internal server error"
 // @Router /song [post]
 func HandleAddSongRequest(w http.ResponseWriter, r *http.Request) {
-	logger.Info("Received request for adding a new song")
+	logger.Info("Received request to add a new song")
 
-	if r.Method != http.MethodPost {
-		logger.Error("Method not allowed: %s", r.Method)
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var newSongRequest *models.NewSongRequest
+	var newSongRequest models.NewSongRequest
 	if err := json.NewDecoder(r.Body).Decode(&newSongRequest); err != nil {
-		logger.Error("Failed to decode request body: %v", err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		logger.Error("Error decoding request body: %v", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
+
+	newSong, err := addSong(&newSongRequest)
+	if err != nil {
+		logger.Error("Error adding new song: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(&newSong); err != nil {
+		logger.Error("Error encoding response: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	logger.Info("Successfully created song: %s", newSong.Name)
+}
+
+func addSong(newSongRequest *models.NewSongRequest) (*models.Song, error) {
+	logger.Debug("New song request body: %+v", newSongRequest)
 
 	song, err := services.GetSongInfo(newSongRequest)
 	if err != nil {
-		logger.Error("Failed to get song info: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
 	songRepo := repositories.NewSongRepo(db.GetDatabase())
 
-	var group *models.Group
-	if !songRepo.IsGroupExist(song.Group) {
-		group, err = songRepo.AddGroup(song.Group)
-		if err != nil {
-			return
-		}
-	} else {
-		group, err = songRepo.GetGroudByName(song.Group)
-		if err != nil {
-			return
-		}
+	group, err := findGroup(song.Group)
+	if err != nil {
+		return nil, err
 	}
 
 	newSong, err := songRepo.AddSong(song, group)
 	if err != nil {
-		logger.Error("Failed to add song: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
-	newSong.GroupName = group.Name
 
 	songLyrics := services.ParseSongText(song.Text)
 	newLyrics := models.NewLyrics{
@@ -76,16 +77,26 @@ func HandleAddSongRequest(w http.ResponseWriter, r *http.Request) {
 
 	err = songRepo.AddLyrycs(&newLyrics)
 	if err != nil {
-		logger.Error("Failed to add lyrics for the song: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
-	if err := json.NewEncoder(w).Encode(&newSong); err != nil {
-		logger.Error("Failed to encode response: %v", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	return newSong, nil
+}
+
+func findGroup(groupName string) (*models.Group, error) {
+	songRepo := repositories.NewSongRepo(db.GetDatabase())
+
+	if songRepo.IsGroupExist(groupName) {
+		g, err := songRepo.GetGroudByName(groupName)
+		if err != nil {
+			return nil, err
+		}
+		return g, nil
 	}
 
-	logger.Info("Created new song: %s", newSong.Name)
+	g, err := songRepo.AddGroup(groupName)
+	if err != nil {
+		return nil, err
+	}
+	return g, nil
 }
