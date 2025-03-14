@@ -25,15 +25,15 @@ import (
 func HandleUpdateSongRequest(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Recieved request to update song")
 
-	var song *models.UpdateSongRequestBody
-	if err := json.NewDecoder(r.Body).Decode(song); err != nil {
+	var song models.UpdateSongRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&song); err != nil {
 		logger.Info("Error decoding request body: %v", err)
 		http.Error(w, "Error decoding request body", http.StatusBadRequest)
 		return
 	}
 	logger.Debug("Update song request body: %+v", song)
 
-	updatedSong, err := updateSong(song)
+	updatedSong, err := updateSong(&song)
 	if err != nil {
 		logger.Info("Error updating song: %v", err)
 		if err == repositories.ErrSongNotFound {
@@ -51,7 +51,6 @@ func HandleUpdateSongRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	logger.Info("Successfully updated song")
 }
 
