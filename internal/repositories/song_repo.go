@@ -5,10 +5,10 @@ import (
 )
 
 type SongRepo struct {
-	conn *db.DBConnection
+	conn *db.DatabaseConnection
 }
 
-func NewSongRepo(conn *db.DBConnection) *SongRepo {
+func NewSongRepo(conn *db.DatabaseConnection) *SongRepo {
 	return &SongRepo{
 		conn: conn,
 	}

@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetLyricsNoError(t *testing.T) {
-	repo := NewSongRepo(db.GetDatabase())
+	repo := NewSongRepo(db.Database())
 
 	queryParams := LyricsQueryParams{
 		SongId: 6,
@@ -23,7 +23,7 @@ func TestGetLyricsNoError(t *testing.T) {
 }
 
 func TestGetLyricsWithOffsetNoError(t *testing.T) {
-	repo := NewSongRepo(db.GetDatabase())
+	repo := NewSongRepo(db.Database())
 
 	queryParams := LyricsQueryParams{
 		SongId: 6,
@@ -39,7 +39,7 @@ func TestGetLyricsWithOffsetNoError(t *testing.T) {
 }
 
 func TestGetLyricsWithLimitNoError(t *testing.T) {
-	repo := NewSongRepo(db.GetDatabase())
+	repo := NewSongRepo(db.Database())
 
 	queryParams := LyricsQueryParams{
 		SongId: 6,

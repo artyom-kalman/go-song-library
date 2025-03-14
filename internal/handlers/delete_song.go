@@ -59,7 +59,7 @@ func getSongIdFromRequest(r *http.Request) (int, error) {
 }
 
 func deleteSongById(songId int) error {
-	songRepo := repositories.NewSongRepo(db.GetDatabase())
+	songRepo := repositories.NewSongRepo(db.Database())
 
 	return songRepo.DeleteSongById(songId)
 }

@@ -16,7 +16,7 @@ func TestAddLyricsAlreadyExists(t *testing.T) {
 		},
 	}
 
-	songRepo := NewSongRepo(db.GetDatabase())
+	songRepo := NewSongRepo(db.Database())
 
 	err := songRepo.AddLyrycs(&lyrics)
 	if err == nil {
@@ -34,7 +34,7 @@ func TestAddLyricsInvalidSongId(t *testing.T) {
 		},
 	}
 
-	songRepo := NewSongRepo(db.GetDatabase())
+	songRepo := NewSongRepo(db.Database())
 
 	err := songRepo.AddLyrycs(&lyrics)
 	if err == nil {

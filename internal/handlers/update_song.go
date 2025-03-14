@@ -55,7 +55,7 @@ func HandleUpdateSongRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateSong(song *models.UpdateSongRequestBody) (*models.Song, error) {
-	songRepo := repositories.NewSongRepo(db.GetDatabase())
+	songRepo := repositories.NewSongRepo(db.Database())
 
 	updatedSong, err := songRepo.UpdateSong(song)
 	if err != nil {

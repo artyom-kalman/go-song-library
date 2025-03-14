@@ -56,7 +56,7 @@ func addSong(newSongRequest *models.NewSongRequest) (*models.Song, error) {
 		return nil, err
 	}
 
-	songRepo := repositories.NewSongRepo(db.GetDatabase())
+	songRepo := repositories.NewSongRepo(db.Database())
 
 	group, err := findGroup(song.Group)
 	if err != nil {
@@ -83,7 +83,7 @@ func addSong(newSongRequest *models.NewSongRequest) (*models.Song, error) {
 }
 
 func findGroup(groupName string) (*models.Group, error) {
-	songRepo := repositories.NewSongRepo(db.GetDatabase())
+	songRepo := repositories.NewSongRepo(db.Database())
 
 	if songRepo.IsGroupExist(groupName) {
 		g, err := songRepo.GetGroudByName(groupName)

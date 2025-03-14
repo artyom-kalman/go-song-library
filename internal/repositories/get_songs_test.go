@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetSongsNotReturnError(t *testing.T) {
-	songRepo := NewSongRepo(db.GetDatabase())
+	songRepo := NewSongRepo(db.Database())
 
 	searchParams := NewSongQueryParams()
 
@@ -19,7 +19,7 @@ func TestGetSongsNotReturnError(t *testing.T) {
 }
 
 func TestGetSongsByGroupName(t *testing.T) {
-	songRepo := NewSongRepo(db.GetDatabase())
+	songRepo := NewSongRepo(db.Database())
 
 	searchParams := NewSongQueryParams()
 	searchParams.GroupName = "Pink Floyd"
@@ -36,7 +36,7 @@ func TestGetSongsByGroupName(t *testing.T) {
 }
 
 func TestGetSongsBySongId(t *testing.T) {
-	songRepo := NewSongRepo(db.GetDatabase())
+	songRepo := NewSongRepo(db.Database())
 
 	searchParams := NewSongQueryParams()
 	searchParams.SongId = 1
@@ -53,7 +53,7 @@ func TestGetSongsBySongId(t *testing.T) {
 }
 
 func TestGetSongsByGroupId(t *testing.T) {
-	songRepo := NewSongRepo(db.GetDatabase())
+	songRepo := NewSongRepo(db.Database())
 
 	searchParams := NewSongQueryParams()
 	searchParams.GroupId = 1
@@ -70,7 +70,7 @@ func TestGetSongsByGroupId(t *testing.T) {
 }
 
 func TestGetSongsByDateRange(t *testing.T) {
-	songRepo := NewSongRepo(db.GetDatabase())
+	songRepo := NewSongRepo(db.Database())
 
 	searchParams := NewSongQueryParams()
 	searchParams.StartDate = "2000-01-01"
@@ -88,7 +88,7 @@ func TestGetSongsByDateRange(t *testing.T) {
 }
 
 func TestGetSongsWithInvalidDateRange(t *testing.T) {
-	songRepo := NewSongRepo(db.GetDatabase())
+	songRepo := NewSongRepo(db.Database())
 
 	searchParams := NewSongQueryParams()
 	searchParams.StartDate = "invalid-date"

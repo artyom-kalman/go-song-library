@@ -110,7 +110,7 @@ func getSongQueryParams(r *http.Request) (*repositories.SongQueryParams, error) 
 }
 
 func getSongs(searchParams *repositories.SongQueryParams) ([]*models.Song, error) {
-	songRepo := repositories.NewSongRepo(db.GetDatabase())
+	songRepo := repositories.NewSongRepo(db.Database())
 
 	songs, err := songRepo.GetSongs(searchParams)
 	if err != nil {

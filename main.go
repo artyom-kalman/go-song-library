@@ -14,8 +14,6 @@ import (
 
 // TODO
 // 1. Миграции не реализованы. Механизмы миграции подразумевают хранение информации о том, что уже было применено. Удаление schema_migrations при старте это не позволяет
-// 4. Нет возможности обновить одно свойство
-// 6. Не по всем полям возможна фильтрация
 
 func init() {
 	logger.InitLogger()
@@ -47,7 +45,7 @@ func main() {
 		return
 	}
 
-	err = db.InitDatabase(databaseConfig)
+	err = db.ConnectToDatabase(databaseConfig)
 	if err != nil {
 		logger.Error(err.Error())
 		return

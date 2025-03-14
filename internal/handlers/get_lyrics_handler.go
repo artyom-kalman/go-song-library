@@ -101,7 +101,7 @@ func getLyricsQueryParamsFromRequest(r *http.Request) (*repositories.LyricsQuery
 }
 
 func getLyrics(searchParams *repositories.LyricsQueryParams) ([]*models.Lyrics, error) {
-	repo := repositories.NewSongRepo(db.GetDatabase())
+	repo := repositories.NewSongRepo(db.Database())
 
 	lyrics, err := repo.GetLyrics(searchParams)
 	if err != nil {
