@@ -41,8 +41,7 @@ func HandleDeleteSongRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	logger.Info("Successfully deleted song", songId)
+	logger.Info("Successfully deleted song id = %d", songId)
 }
 
 func getSongIdFromRequest(r *http.Request) (int, error) {
