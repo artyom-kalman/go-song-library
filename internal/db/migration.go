@@ -20,7 +20,7 @@ func RunMigration() error {
 
 	// databaseConnection.Exec("DROP TABLE IF EXISTS schema_migrations;")
 
-	driver, err := postgres.WithInstance(databaseConnection.connection, &postgres.Config{})
+	driver, err := postgres.WithInstance(databaseConnection.conn, &postgres.Config{})
 	if err != nil {
 		return err
 	}

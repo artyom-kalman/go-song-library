@@ -9,7 +9,7 @@ import (
 )
 
 type DatabaseConnection struct {
-	connection *sql.DB
+	conn *sql.DB
 }
 
 var databaseConnection *DatabaseConnection

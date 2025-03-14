@@ -12,13 +12,6 @@ import (
 	_ "github.com/artyom-kalman/go-song-library/docs"
 )
 
-// TODO
-// 1. Миграции не реализованы. Механизмы миграции подразумевают хранение информации о том, что уже было применено. Удаление schema_migrations при старте это не позволяет
-
-func init() {
-	logger.InitLogger()
-}
-
 // @title Song Library API
 // @version 1.0
 // @description API for managing a song library
@@ -27,6 +20,8 @@ func init() {
 // @BasePath /
 // @schemes http
 func main() {
+	logger.InitLogger()
+
 	err := config.LoadConfig()
 	if err != nil {
 		logger.Error(err.Error())
@@ -50,6 +45,7 @@ func main() {
 		logger.Error(err.Error())
 		return
 	}
+	defer db.CloseDatabaseConnection()
 
 	err = db.RunMigration()
 	if err != nil {
@@ -66,6 +62,6 @@ func main() {
 
 	err = http.ListenAndServe(serverConfig.Port, nil)
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Error("Error starting server: %v", err)
 	}
 }

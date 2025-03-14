@@ -3,12 +3,12 @@ package db
 import "database/sql"
 
 func (db *DatabaseConnection) Query(query string) (*sql.Rows, error) {
-	err := db.connection.Ping()
+	err := db.conn.Ping()
 	if err != nil {
 		return nil, err
 	}
 
-	rows, err := db.connection.Query(query)
+	rows, err := db.conn.Query(query)
 	if err != nil {
 		return nil, err
 	}

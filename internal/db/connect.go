@@ -43,3 +43,13 @@ func ConnectToDatabase(config *config.DBConfig) error {
 
 	return nil
 }
+
+func CloseDatabaseConnection() {
+	if databaseConnection == nil {
+		return
+	}
+
+	databaseConnection.conn.Close()
+
+	logger.Info("Closed database connection")
+}
