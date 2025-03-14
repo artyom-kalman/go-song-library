@@ -119,5 +119,5 @@
 
 3. Запустите Docker Compose:
    ```sh
-   docker-compose up --build
+   docker-compose up
    ```
