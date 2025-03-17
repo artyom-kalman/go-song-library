@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"strconv"
@@ -30,7 +31,7 @@ func HandleDeleteSongRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = deleteSongById(songId)
+	err = deleteSongById(songId, r.Context())
 	if err != nil {
 		logger.Error("Error deleting song %d: %v", songId, err)
 		if err == repositories.ErrSongNotFound {
@@ -58,8 +59,8 @@ func getSongIdFromRequest(r *http.Request) (int, error) {
 	return songId, nil
 }
 
-func deleteSongById(songId int) error {
+func deleteSongById(songId int, ctx context.Context) error {
 	songRepo := repositories.NewSongRepo(db.Database())
 
-	return songRepo.DeleteSongById(songId)
+	return songRepo.DeleteSongById(songId, ctx)
 }

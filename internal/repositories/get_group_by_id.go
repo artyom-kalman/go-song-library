@@ -1,14 +1,15 @@
 package repositories
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/artyom-kalman/go-song-library/internal/models"
 )
 
-func (repo *SongRepo) GetGroudByName(groupname string) (*models.Group, error) {
+func (repo *SongRepo) GetGroudByName(groupname string, ctx context.Context) (*models.Group, error) {
 	query := fmt.Sprintf("SELECT id FROM groups WHERE name = '%s';", groupname)
-	queryResult, err := repo.conn.Query(query)
+	queryResult, err := repo.conn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}

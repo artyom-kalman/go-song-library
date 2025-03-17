@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/artyom-kalman/go-song-library/internal/models"
@@ -12,10 +13,10 @@ type LyricsQueryParams struct {
 	Limit  int
 }
 
-func (repo *SongRepo) GetLyrics(queryParams *LyricsQueryParams) ([]*models.Lyrics, error) {
+func (repo *SongRepo) GetLyrics(queryParams *LyricsQueryParams, ctx context.Context) ([]*models.Lyrics, error) {
 	query := makeGetLyricsQuery(queryParams)
 
-	rows, err := repo.conn.Query(query)
+	rows, err := repo.conn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}

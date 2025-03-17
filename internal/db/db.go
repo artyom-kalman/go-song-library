@@ -14,11 +14,11 @@ type DatabaseConnection struct {
 
 var databaseConnection *DatabaseConnection
 
-func Database() *DatabaseConnection {
+func Database() DatabaseConnection {
 	if databaseConnection == nil {
 		databaseConfig, _ := config.GetDBConfig()
 		ConnectToDatabase(databaseConfig)
 	}
 
-	return databaseConnection
+	return *databaseConnection
 }

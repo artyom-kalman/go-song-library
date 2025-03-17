@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"testing"
 
 	"github.com/artyom-kalman/go-song-library/internal/db"
@@ -18,7 +19,7 @@ func TestAddLyricsAlreadyExists(t *testing.T) {
 
 	songRepo := NewSongRepo(db.Database())
 
-	err := songRepo.AddLyrycs(&lyrics)
+	err := songRepo.AddLyrics(&lyrics, context.Background())
 	if err == nil {
 		t.Errorf("expected error")
 	}
@@ -36,7 +37,7 @@ func TestAddLyricsInvalidSongId(t *testing.T) {
 
 	songRepo := NewSongRepo(db.Database())
 
-	err := songRepo.AddLyrycs(&lyrics)
+	err := songRepo.AddLyrics(&lyrics, context.Background())
 	if err == nil {
 		t.Errorf("expected no error\ngot %v", err)
 	}

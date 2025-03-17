@@ -1,18 +1,19 @@
 package repositories
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/artyom-kalman/go-song-library/internal/models"
 )
 
-func (songRepo *SongRepo) GetSongById(id int) (*models.Song, error) {
+func (songRepo *SongRepo) GetSongById(id int, ctx context.Context) (*models.Song, error) {
 	query := fmt.Sprintf(
 		"SELECT id, name, group_id, release_date, link FROM songs WHERE id = %d",
 		id,
 	)
 
-	queryResult, err := songRepo.conn.Query(query)
+	queryResult, err := songRepo.conn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}

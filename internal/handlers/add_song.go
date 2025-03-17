@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -32,7 +33,7 @@ func HandleAddSongRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newSong, err := addSong(&newSongRequest)
+	newSong, err := addSong(&newSongRequest, r.Context())
 	if err != nil {
 		logger.Error("Error adding new song: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -48,22 +49,22 @@ func HandleAddSongRequest(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Successfully created song: %s", newSong.Name)
 }
 
-func addSong(newSongRequest *models.NewSongRequest) (*models.Song, error) {
+func addSong(newSongRequest *models.NewSongRequest, ctx context.Context) (*models.Song, error) {
 	logger.Debug("New song request body: %+v", newSongRequest)
+
+	songRepo := repositories.NewSongRepo(db.Database())
 
 	song, err := services.GetSongInfo(newSongRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	songRepo := repositories.NewSongRepo(db.Database())
-
-	group, err := findGroup(song.Group)
+	group, err := findGroup(song.Group, ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	newSong, err := songRepo.AddSong(song, group)
+	newSong, err := songRepo.AddSong(song, group, ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +75,7 @@ func addSong(newSongRequest *models.NewSongRequest) (*models.Song, error) {
 		Text:   songLyrics,
 	}
 
-	err = songRepo.AddLyrycs(&newLyrics)
+	err = songRepo.AddLyrics(&newLyrics, ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -82,11 +83,11 @@ func addSong(newSongRequest *models.NewSongRequest) (*models.Song, error) {
 	return newSong, nil
 }
 
-func findGroup(groupName string) (*models.Group, error) {
+func findGroup(groupName string, ctx context.Context) (*models.Group, error) {
 	songRepo := repositories.NewSongRepo(db.Database())
 
-	if songRepo.IsGroupExist(groupName) {
-		g, err := songRepo.GetGroudByName(groupName)
+	if songRepo.IsGroupExist(groupName, ctx) {
+		g, err := songRepo.GetGroudByName(groupName, ctx)
 		if err != nil {
 			return nil, err
 		}

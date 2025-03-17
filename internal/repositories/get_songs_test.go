@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"testing"
 
 	"github.com/artyom-kalman/go-song-library/internal/db"
@@ -11,7 +12,7 @@ func TestGetSongsNotReturnError(t *testing.T) {
 
 	searchParams := NewSongQueryParams()
 
-	_, err := songRepo.GetSongs(searchParams)
+	_, err := songRepo.GetSongs(searchParams, context.Background())
 
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -24,7 +25,7 @@ func TestGetSongsByGroupName(t *testing.T) {
 	searchParams := NewSongQueryParams()
 	searchParams.GroupName = "Pink Floyd"
 
-	songs, err := songRepo.GetSongs(searchParams)
+	songs, err := songRepo.GetSongs(searchParams, context.Background())
 
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -41,7 +42,7 @@ func TestGetSongsBySongId(t *testing.T) {
 	searchParams := NewSongQueryParams()
 	searchParams.SongId = 1
 
-	songs, err := songRepo.GetSongs(searchParams)
+	songs, err := songRepo.GetSongs(searchParams, context.Background())
 
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -58,7 +59,7 @@ func TestGetSongsByGroupId(t *testing.T) {
 	searchParams := NewSongQueryParams()
 	searchParams.GroupId = 1
 
-	songs, err := songRepo.GetSongs(searchParams)
+	songs, err := songRepo.GetSongs(searchParams, context.Background())
 
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -76,7 +77,7 @@ func TestGetSongsByDateRange(t *testing.T) {
 	searchParams.StartDate = "2000-01-01"
 	searchParams.EndDate = "2023-12-31"
 
-	songs, err := songRepo.GetSongs(searchParams)
+	songs, err := songRepo.GetSongs(searchParams, context.Background())
 
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -94,7 +95,7 @@ func TestGetSongsWithInvalidDateRange(t *testing.T) {
 	searchParams.StartDate = "invalid-date"
 	searchParams.EndDate = "2023-12-31"
 
-	_, err := songRepo.GetSongs(searchParams)
+	_, err := songRepo.GetSongs(searchParams, context.Background())
 
 	if err == nil {
 		t.Error("Expected error for invalid start date, got none")

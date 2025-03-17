@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -33,7 +34,7 @@ func HandleUpdateSongRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	logger.Debug("Update song request body: %+v", song)
 
-	updatedSong, err := updateSong(&song)
+	updatedSong, err := updateSong(&song, r.Context())
 	if err != nil {
 		logger.Info("Error updating song: %v", err)
 		if err == repositories.ErrSongNotFound {
@@ -54,10 +55,10 @@ func HandleUpdateSongRequest(w http.ResponseWriter, r *http.Request) {
 	logger.Info("Successfully updated song")
 }
 
-func updateSong(song *models.UpdateSongRequestBody) (*models.Song, error) {
+func updateSong(song *models.UpdateSongRequestBody, ctx context.Context) (*models.Song, error) {
 	songRepo := repositories.NewSongRepo(db.Database())
 
-	updatedSong, err := songRepo.UpdateSong(song)
+	updatedSong, err := songRepo.UpdateSong(song, ctx)
 	if err != nil {
 		return nil, err
 	}

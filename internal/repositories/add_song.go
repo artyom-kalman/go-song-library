@@ -1,15 +1,16 @@
 package repositories
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
 	"github.com/artyom-kalman/go-song-library/internal/models"
 )
 
-func (repo *SongRepo) AddSong(song *models.NewSong, group *models.Group) (*models.Song, error) {
+func (repo *SongRepo) AddSong(song *models.NewSong, group *models.Group, ctx context.Context) (*models.Song, error) {
 	query := getNewSongQuery(song, group)
-	queryResult, err := repo.conn.Query(query)
+	queryResult, err := repo.conn.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}

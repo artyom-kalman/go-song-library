@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -44,7 +45,7 @@ func HandleGetSongRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	logger.Debug("Getsong parameters: %+v", searchParams)
 
-	songs, err := getSongs(searchParams)
+	songs, err := getSongs(searchParams, r.Context())
 	if err != nil {
 		logger.Error("Error getting songs: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -109,10 +110,10 @@ func getSongQueryParams(r *http.Request) (*repositories.SongQueryParams, error) 
 	return searchParams, nil
 }
 
-func getSongs(searchParams *repositories.SongQueryParams) ([]*models.Song, error) {
+func getSongs(searchParams *repositories.SongQueryParams, ctx context.Context) ([]*models.Song, error) {
 	songRepo := repositories.NewSongRepo(db.Database())
 
-	songs, err := songRepo.GetSongs(searchParams)
+	songs, err := songRepo.GetSongs(searchParams, ctx)
 	if err != nil {
 		return nil, err
 	}

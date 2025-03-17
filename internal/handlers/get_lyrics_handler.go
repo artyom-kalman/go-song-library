@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -44,7 +45,7 @@ func HandleGetLyricsRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	logger.Debug("GetLyrics query params: %+v", queryParams)
 
-	lyrics, err := getLyrics(queryParams)
+	lyrics, err := getLyrics(queryParams, r.Context())
 	if err != nil {
 		logger.Error("Error processing request: %v", err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -100,10 +101,10 @@ func getLyricsQueryParamsFromRequest(r *http.Request) (*repositories.LyricsQuery
 	return &result, nil
 }
 
-func getLyrics(searchParams *repositories.LyricsQueryParams) ([]*models.Lyrics, error) {
+func getLyrics(searchParams *repositories.LyricsQueryParams, ctx context.Context) ([]*models.Lyrics, error) {
 	repo := repositories.NewSongRepo(db.Database())
 
-	lyrics, err := repo.GetLyrics(searchParams)
+	lyrics, err := repo.GetLyrics(searchParams, ctx)
 	if err != nil {
 		return nil, err
 	}

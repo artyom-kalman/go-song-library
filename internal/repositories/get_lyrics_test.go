@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"context"
 	"testing"
 
 	"github.com/artyom-kalman/go-song-library/internal/db"
@@ -15,7 +16,7 @@ func TestGetLyricsNoError(t *testing.T) {
 		Limit:  0,
 	}
 
-	_, err := repo.GetLyrics(&queryParams)
+	_, err := repo.GetLyrics(&queryParams, context.Background())
 
 	if err != nil {
 		t.Errorf("Expected no error, got %s", err.Error())
@@ -31,7 +32,7 @@ func TestGetLyricsWithOffsetNoError(t *testing.T) {
 		Limit:  0,
 	}
 
-	_, err := repo.GetLyrics(&queryParams)
+	_, err := repo.GetLyrics(&queryParams, context.Background())
 
 	if err != nil {
 		t.Errorf("Expected no error, got %s", err.Error())
@@ -47,7 +48,7 @@ func TestGetLyricsWithLimitNoError(t *testing.T) {
 		Limit:  2,
 	}
 
-	lyrics, err := repo.GetLyrics(&queryParams)
+	lyrics, err := repo.GetLyrics(&queryParams, context.Background())
 
 	if err != nil {
 		t.Errorf("Expected no error, got %s", err.Error())
